@@ -31,7 +31,9 @@ class Student {
 public class TestApp1 {
     public static void main(String[] args) {
         Student s = new Student();
-        s.setDetails("John", 12, 90);
+        s.setName("John");
+        s.setRollNo(1234);
+        s.setMarks(90.0);
         System.out.println(s.getName());
         System.out.println(s.getRollNo());  
         System.out.println(s.getMarks());
