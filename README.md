@@ -127,7 +127,7 @@ In java, depending upon the position of declaration and its behaviour we have 3 
 
 1. Local Variable - variable declared inside a method are local
 2. Instance Variable - variables declared inside the class but outside the method
-3.Static Variable - variables declared inside the class and outside the method with static keyword
+3. Static Variable - variables declared inside the class and outside the method with static keyword
 
 ## Local Variable
 - Local variable is a variable that is declared inside a method.
