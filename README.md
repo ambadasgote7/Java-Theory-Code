@@ -213,3 +213,79 @@ public class Test5 {
 }
 ```
 ![alt text](imgaes/image4.png)
+
+---
+
+## Ploymorphism 
+  - Ploy  ==> Many
+  - Morphism ==> Forms
+
+1. Static Ploymorphism (Complie Time Polymorphism)
+    - eg : Method Overriding, Method Hiding
+2. Dynamic Ploymorphism (Run Time Polymorphism)
+    - eg : Method Overloading
+
+---
+
+## Method Overloding
+- Methods with same name and different parameter type or count is called **Method Overloading**.
+- In case of method overloaing, the complier will bind the call of the method to the body of method.
+- JVM will just execute the method body, so we can say method overloading as **Complie Time Binding/Early Binding**.
+ 
+ ```java
+ class Demo {
+    public void add(int a, int b) {
+        System.out.println("int-int parameter");
+    }
+    public void add(float a, float b) {
+        System.out.println("float-float parameter");
+    }
+    public void add(double a, double b) {
+        System.out.println("double-double parameter");
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        Demo d = new Demo();
+        d.add(10,20); // int-int parameter
+        d.add(10.0,20.0); // double-double parameter
+        d.add(10.0f,20.0f); // float-float parameter
+    }
+}
+Output :
+PS D:\Practice Examples\Java\coding\OOPS_3> javac Test.java
+PS D:\Practice Examples\Java\coding\OOPS_3> java Test
+int-int parameter
+double-double parameter
+float-float parameter
+
+```
+## Var-args in java
+- This mechanism is available in java from JDK1.5V
+- In case of var-args all the arugments should be of same datatype
+- U can call var-args by passing arguments from 0....n
+```java
+class AdvancedCalculator{
+//Var-Args:: 0 to n
+public void add(int... args){
+    int sum = 0;
+
+    for (int data : args )
+    {
+    sum+=data;
+    }
+    System.out.println(sum);
+    }
+}
+class Test {
+    public static void main(String[] args) {
+        AdvancedCalculator ac = new AdvancedCalculator();
+        ac.add();
+        ac.add(10);
+        ac.add(10,20);
+        ac.add(10,20,30);
+        ac.add(10,20,30,40);
+        ac.add(10,20,30,40,50);
+    }
+}
+```
