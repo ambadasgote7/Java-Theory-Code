@@ -289,3 +289,6 @@ class Test {
     }
 }
 ```
+
+![Type promotion](imgaes/image5.png)
+
