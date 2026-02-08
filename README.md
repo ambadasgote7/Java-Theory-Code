@@ -487,3 +487,12 @@ Crow fly @medium height
 Crow eat insects....
 
 ```
+
+**Note:**
+1. abstract class contains concrete methods and abstract methods, so we say
+through abstract class 100% abstraction can't be
+achieved.
+2. To achieve 100% abstraction, we need to go for "interfaces".
+3. Why we need constructor in abstract class, when we can't instantiate an object?
+- Ans. To get the properites of parent class to child class, we need constructors in
+abstract class also.
