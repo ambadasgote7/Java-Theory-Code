@@ -359,7 +359,7 @@ public class Test {
 2. Access Modifier Rule
 - While overriding, we cannot reduce the scope of the access modifier.
 - Order of scope:
-    private < default < protected < public
+    **private < default < protected < public**
 - Increasing the scope is allowed.
 
 3. Private Method Rule
