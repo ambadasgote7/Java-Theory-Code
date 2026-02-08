@@ -359,7 +359,7 @@ public class Test {
 2. Access Modifier Rule
 - While overriding, we cannot reduce the scope of the access modifier.
 - Order of scope:
-    private < default < protected < public
+    **private < default < protected < public**
 - Increasing the scope is allowed.
 
 3. Private Method Rule
@@ -386,7 +386,7 @@ public class Test {
     - Interface
 
 ## Abstract Class
-- In real world, for few cases we need not to create the objects of the class for handle that scenario we use the abstract keyword.
+- In real world, for few cases we need not to create the objects of the class for handle that scenario we use the abstract class.
 
 - Abstract keyword can be used in the following ways.
     - **Abstract class** - If we mark class as abstract then we can't instantiate the object of that class.
@@ -559,7 +559,7 @@ abstract class also.
 - Implementing class name
 
 Marker Interfaces
-- A Marker Interface is an interface without any variables and methods. It is used to mark a class so that the JVM or framework can provide     special behavior or privileges to that class at runtime.
+- A Marker Interface is an interface without any variables and methods. It is used to mark a class so that the JVM or framework can provide special behavior or privileges to that class at runtime.
 
 
 **Benefit of Marker Interfaces**
@@ -611,77 +611,3 @@ The sum is :: 30
 The diff is :: 30
 
 ```
-
---- 
-
-## this, super, final
-
-## 1. this keyword 
-    - this refers to the current class object.
-
-**Uses of this :**
-- To differentiate instance variables from local variables
-- To call current class constructor
-- To pass current object as a parameter
-- To return current class object
-
-```java
-class Student {
-    int id;
-
-    Student(int id) {
-        this.id = id;   // refers to current object variable
-    }
-}
-```
-
-## 2. super keyword
-    - super refers to the parent class object.
-
-**Uses of super :**
-- To access parent class variables
-- To call parent class methods
-- To call parent class constructor
-
-```java 
-class Parent {
-    int x = 10;
-}
-
-class Child extends Parent {
-    int x = 20;
-
-    void show() {
-        System.out.println(super.x); // parent variable
-    }
-}
-```
-
-## 3. final keyword
-    - The final keyword is used to restrict modification.
-
-**final Variable**
-- Value cannot be changed
-- Acts as a constant
-```java
-class Demo {
-    final int x = 10;
-}
-```
-**final Method**
-- Method cannot be overridden
-```java
-class Parent {
-    final void show() {
-        System.out.println("Parent method");
-    }
-}
-```
-**final Class**
-- Class cannot be inherited
-```java
-final class Test {
-}
-```
-
----
