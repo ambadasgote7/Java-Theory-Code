@@ -611,3 +611,77 @@ The sum is :: 30
 The diff is :: 30
 
 ```
+
+--- 
+
+## this, super, final
+
+## 1. this keyword 
+    - this refers to the current class object.
+
+**Uses of this :**
+- To differentiate instance variables from local variables
+- To call current class constructor
+- To pass current object as a parameter
+- To return current class object
+
+```java
+class Student {
+    int id;
+
+    Student(int id) {
+        this.id = id;   // refers to current object variable
+    }
+}
+```
+
+## 2. super keyword
+    - super refers to the parent class object.
+
+**Uses of super :**
+- To access parent class variables
+- To call parent class methods
+- To call parent class constructor
+
+```java 
+class Parent {
+    int x = 10;
+}
+
+class Child extends Parent {
+    int x = 20;
+
+    void show() {
+        System.out.println(super.x); // parent variable
+    }
+}
+```
+
+## 3. final keyword
+    - The final keyword is used to restrict modification.
+
+**final Variable**
+- Value cannot be changed
+- Acts as a constant
+```java
+class Demo {
+    final int x = 10;
+}
+```
+**final Method**
+- Method cannot be overridden
+```java
+class Parent {
+    final void show() {
+        System.out.println("Parent method");
+    }
+}
+```
+**final Class**
+- Class cannot be inherited
+```java
+final class Test {
+}
+```
+
+---
