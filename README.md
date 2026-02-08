@@ -496,3 +496,118 @@ achieved.
 3. Why we need constructor in abstract class, when we can't instantiate an object?
 - Ans. To get the properites of parent class to child class, we need constructors in
 abstract class also.
+
+---
+
+## Interfaces 
+1. In java, interfaces has been introduced to provide "SRS (Software Requirements Specification)".
+
+2. In java, interfaces act like the contract between the client and service provider.
+- Interfaces also present the mechanism to put rules from the client to the service provider.
+    - eg : JDBC API (rules given by the Sun Microsystems/Oracle) for the database vendors like MySQL, Oracle, etc.
+    - eg : Servlet API (rules given by the Sun Microsystems/Oracle) for the server vendors like Apache, Tomcat, etc.
+
+3. Interfaces are they way to achieve 100% abstraction.
+ - Inside java interfaces we can write only abstract methods,we can't write concrete methods.
+ - Inside interface the methods we write always indicates "public and abstract".
+
+**Implementing Interfaces :**
+- Interfaces should be implemented by a class.
+- The implementing class must provide implementation for all abstract methods.
+- If the class fails to implement at least one abstract method, the class becomes abstract.
+
+**Object and Reference Creation Rules**
+- Can we create an object for an abstract class? => No
+- Can we create a reference for an abstract class? => Yes
+- Can we create an object for an interface? => No
+- Can we create a reference for an interface? => Yes
+
+**Loose Coupling using Interface Reference**
+- Using interface reference with implementation object achieves:
+    - Loose coupling
+    - Polymorphism
+
+**extends vs implements**
+- Class Extending a Class
+    - A class can extend only one class at a time.
+
+- Class Implementing Interfaces
+    - A class can implement any number of interfaces at a time.
+
+- Class Extending a Class and Implementing Interfaces
+    - Extend one class
+    - Implement any number of interfaces
+    - Do both simultaneously
+
+- Interface Extending Interfaces
+    - An interface can extend any number of interfaces.
+
+**Variables in Interfaces**
+- We can write variables inside an interface.
+- Interface variables are always:
+    - public
+    - static
+    - final
+
+**Restrictions in Interfaces**
+- Constructors → Not allowed
+- Static blocks → Not allowed
+- Instance blocks → Not allowed
+
+**Accessing Interface Variables**
+- Interface name
+- Implementing class name
+
+Marker Interfaces
+- A Marker Interface is an interface without any variables and methods. It is used to mark a class so that the JVM or framework can provide     special behavior or privileges to that class at runtime.
+
+
+**Benefit of Marker Interfaces**
+- The implementing class gets extra advantage at runtime.
+
+**Examples**
+- If a class implements Serializable
+    → Object can be sent over the network.
+
+- If a class implements Cloneable
+    → Object can be cloned (duplicated).
+
+**Inbuilt Marker Interfaces**
+- java.lang.Cloneable
+- java.io.Serializable
+
+```java
+interface ICalculator
+{
+    void add(int a, int b);
+    void sub(int a, int b);
+}
+
+class CalculatorImpl implements ICalculator
+{
+    public void add(int a, int b)
+    {
+        System.out.println("The sum is :: " + (a + b));
+    }
+
+    public void sub(int a, int b)
+    {
+        System.out.println("The diff is :: " + (a - b));
+    }
+}
+
+public class Test
+{
+    public static void main(String[] args)
+    {
+        // Loose coupling using interface reference
+        ICalculator calculator = new CalculatorImpl();
+        calculator.add(10, 20);
+        calculator.sub(50, 20);
+    }
+}
+
+The sum is :: 30
+The diff is :: 30
+
+```
