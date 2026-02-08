@@ -378,3 +378,112 @@ public class Test {
 - If the child class does not provide implementation, then the child class must be declared abstract.
 
 ---
+
+## Abstraction
+- Abstraction is a process of hiding the internal implementation details, but exposing the set of services offered.
+- In java, abstraction can be achieved in 2 ways.
+    - Abstract class
+    - Interface
+
+## Abstract Class
+- In real world, for few cases we need not to create the objects of the class for handle that scenario we use the abstract keyword.
+
+- Abstract keyword can be used in the following ways.
+    - **Abstract class** - If we mark class as abstract then we can't instantiate the object of that class.
+    - **Abstract method** - If we mark method as abstract then we should provide the implementation for that method.
+    - **Abstract variable - WE CAN'T USE ABSTRACT KEYWORD FOR VARIABLE.**
+
+**Rules for Abstract Keyword:**
+
+1. If a class contains atleast one abstract method, then mark the class as
+"abstract".
+2. abstract class can't be instantiated.
+3. for an abstract class, we can create a reference, but not the object.
+4. Inside abstract class, we can write concrete methods also.
+5. If a parent class is abstract, then compulsorily the child class should give
+implementation for all the abstract methods otherwise the child class also would become "abstract".
+6. Even if the class doesn't contain abstract methods/concrete method still we can
+mark the empty class as "abstract".
+
+**Example :**
+```java
+package coding.OOPS_5;
+
+abstract class Bird {
+    public abstract void fly();
+    public abstract void eat();
+}
+
+class Sparrow extends Bird {
+    public void fly() {
+        System.out.println("Sparrow fly @short height");
+    }
+    public void eat() {
+        System.out.println("Sparrow eat grains....");
+    }
+}
+
+abstract class Eagle extends Bird {
+    public void fly() {
+        System.out.println("Eagle fly @long height");
+    }
+    public abstract void eat();
+}
+
+class SerpentEagle extends Eagle {
+    public void eat() {
+        System.out.println("Serpent Eagle eat snakes....");
+    }
+}
+
+class GoldenEagle extends Eagle {
+    public void eat() {
+        System.out.println("Golden Eagle eat fish....");
+    }
+}
+
+class Crow extends Bird {
+    public void fly() {
+        System.out.println("Crow fly @medium height");
+    }
+    public void eat() {
+        System.out.println("Crow eat insects....");
+    }
+}
+
+abstract class BirdApp {
+    // No methods are declared in abstract class
+    // Abstract class can contain the concrete methods as well as abstract methods and even no methods
+}
+
+class Sky {
+    public void allowBird(Bird ref) {
+        ref.fly();
+        ref.eat();
+        System.out.println();
+    }
+}
+public class Test2 {
+    public static void main(String[] args) {
+        Sky s = new Sky();
+        s.allowBird(new Sparrow());
+        s.allowBird(new SerpentEagle());
+        s.allowBird(new GoldenEagle());
+        s.allowBird(new Crow());
+    }
+}
+PS D:\Practice Examples\Java> javac coding/OOPS_5/Test2.java
+PS D:\Practice Examples\Java> java coding/OOPS_5/Test2      
+Sparrow fly @short height
+Sparrow eat grains....
+
+Eagle fly @long height
+Serpent Eagle eat snakes....
+
+Eagle fly @long height
+Golden Eagle eat fish....
+
+Crow fly @medium height
+Crow eat insects....
+
+```
