@@ -386,7 +386,7 @@ public class Test {
     - Interface
 
 ## Abstract Class
-- In real world, for few cases we need not to create the objects of the class for handle that scenario we use the abstract keyword.
+- In real world, for few cases we need not to create the objects of the class for handle that scenario we use the abstract class.
 
 - Abstract keyword can be used in the following ways.
     - **Abstract class** - If we mark class as abstract then we can't instantiate the object of that class.
@@ -559,7 +559,7 @@ abstract class also.
 - Implementing class name
 
 Marker Interfaces
-- A Marker Interface is an interface without any variables and methods. It is used to mark a class so that the JVM or framework can provide     special behavior or privileges to that class at runtime.
+- A Marker Interface is an interface without any variables and methods. It is used to mark a class so that the JVM or framework can provide special behavior or privileges to that class at runtime.
 
 
 **Benefit of Marker Interfaces**
