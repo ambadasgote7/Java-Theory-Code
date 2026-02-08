@@ -227,6 +227,8 @@ public class Test5 {
 
 ---
 
+## 1. Static Ploymorphism (Complie Time Polymorphism)
+
 ## Method Overloding
 - Methods with same name and different parameter type or count is called **Method Overloading**.
 - In case of method overloaing, the complier will bind the call of the method to the body of method.
@@ -292,3 +294,87 @@ class Test {
 
 ![Type promotion](imgaes/image5.png)
 
+---
+
+## 2. Dynamic Ploymorphism (Run Time Polymorphism)
+
+## Method Overriding
+- During inheritance, the parent class method implementation would not match the needs of the child class 
+ so, the child class takes the methods name, but it will change the implementation as per the needs of the child class.
+ This is called **Method Overriding**.
+
+- In case of overriding, JVM will bind the calls based on the runtime object, but not on the reference of object 
+  so, we can say Method Overriding as **True Polymorphism/ Late Binding/ Run Time Binding**.
+
+```java
+package coding.OOPS_4;
+
+class Parent {
+    public void property() {
+        System.out.println("Land + Cash + Gold");
+    }
+
+    public void marry() {
+        System.out.println("Relative Girl");
+    }
+}
+
+class Child extends Parent {
+    public void property() {
+        System.out.println("Land + Cash + Gold");
+    }
+    public void marry() {
+        // Re-implementation of the method
+        System.out.println("Some Other Girl");
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        Parent p = new Parent();
+        p.property(); // Land + Cash + Gold
+        p.marry(); // Relative Girl
+
+        Child c = new Child();
+        c.property(); // Land + Cash + Gold
+        c.marry(); // Some Other Girl
+       
+        Parent pa = new Child();
+        pa.property(); // Land + Cash + Gold
+        pa.marry(); // Some Other Girl
+
+        // Complier will throw error : incompatible types if we type cast then runtime error java.lang.ClassCastException
+        // Child ch = (Child) new Parent();
+        // ch.property();
+        // ch.marry();
+    }
+}
+```
+
+**Rules of Overriding :**
+
+1. Return Type Rule
+- While overriding, we cannot change the return type of the method.
+- Changing return type is allowed only if there is a relationship between return types (covariant return types).
+
+2. Access Modifier Rule
+- While overriding, we cannot reduce the scope of the access modifier.
+- Order of scope:
+    private < default < protected < public
+- Increasing the scope is allowed.
+
+3. Private Method Rule
+- private methods do not participate in inheritance.
+- Therefore, overriding private methods is not possible.
+
+4. Final Method Rule
+- A method declared as final cannot be overridden in the child class.
+- final keyword usage:
+    - Variable → value cannot be changed
+    - Method → cannot be overridden
+    - Class → cannot be inherited
+
+5. Abstract Method Rule
+- If a parent class contains abstract methods, the child class must provide implementation for all of them.
+- If the child class does not provide implementation, then the child class must be declared abstract.
+
+---
