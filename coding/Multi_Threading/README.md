@@ -338,3 +338,324 @@ Answer:
 
 ---
 
+### Synchronization, Static Locking & Deadlock 
+
+---
+
+# 1️⃣ Why Synchronization Is Needed
+
+When multiple threads access **shared mutable data**, race conditions can occur.
+
+Example without synchronization:
+
+```java
+class Counter {
+    int count = 0;
+
+    void increment() {
+        count++;   // NOT atomic
+    }
+}
+
+public class Test {
+    public static void main(String[] args) throws InterruptedException {
+
+        Counter c = new Counter();
+
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) c.increment();
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) c.increment();
+        });
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        System.out.println("Final Count: " + c.count);
+    }
+}
+```
+
+Expected: `2000`  
+Actual: unpredictable (race condition)
+
+---
+
+# 2️⃣ Synchronized Method
+
+```java
+class Counter {
+    int count = 0;
+
+    synchronized void increment() {
+        count++;
+    }
+}
+```
+
+- Lock is taken on `this` (current object)
+- Only one thread can execute at a time
+- Output will always be `2000`
+
+---
+
+# 3️⃣ Synchronized Block
+
+```java
+class Counter {
+    int count = 0;
+    private final Object lock = new Object();
+
+    void increment() {
+        synchronized (lock) {
+            count++;
+        }
+    }
+}
+```
+
+### Why use block?
+- Lock only critical section
+- Better performance control
+
+### Best Practice:
+```java
+private final Object lock = new Object();
+```
+
+- `private` → prevent external interference
+- `final` → prevent reassignment
+- `static` → only if class-level lock needed
+
+---
+
+# 4️⃣ synchronized(this)
+
+```java
+void increment() {
+    synchronized(this) {
+        count++;
+    }
+}
+```
+
+Works only if:
+- All threads use the SAME object instance.
+
+Example:
+
+```java
+Counter c = new Counter();
+```
+
+Both threads must call `c.increment()`.
+
+If two different objects:
+```java
+Counter c1 = new Counter();
+Counter c2 = new Counter();
+```
+
+No synchronization between them.
+
+---
+
+# 5️⃣ Static Synchronization
+
+```java
+class Counter {
+    static int count = 0;
+
+    static synchronized void increment() {
+        count++;
+    }
+}
+```
+
+Lock is taken on:
+```
+Counter.class
+```
+
+Equivalent to:
+
+```java
+synchronized(Counter.class) {
+    count++;
+}
+```
+
+Used when:
+- Shared static data
+- Need class-level locking
+
+---
+
+# 6️⃣ Important Difference
+
+| Type | Lock Taken On |
+|------|---------------|
+| synchronized method | this (object) |
+| static synchronized method | Class object |
+| synchronized(lock) | Custom object |
+
+---
+
+# 7️⃣ Reentrant Locking
+
+Java intrinsic locks are **reentrant**.
+
+If a thread already holds a lock,
+it can acquire it again without blocking.
+
+Example:
+
+```java
+synchronized (Counter.class) {
+    synchronized (Counter.class) {
+        // Allowed (same thread)
+    }
+}
+```
+
+---
+
+# 8️⃣ Blocking Example
+
+```java
+class Demo {
+    static void method() {
+        synchronized (Demo.class) {
+            try { Thread.sleep(5000); } catch (Exception e) {}
+        }
+    }
+}
+```
+
+If one thread enters:
+- Other threads wait until lock is released.
+
+---
+
+# 9️⃣ Deadlock Example (Important for Interview)
+
+Deadlock requires:
+- Two locks
+- Opposite acquisition order
+
+```java
+public class Test {
+
+    public static void main(String[] args) {
+
+        Thread t1 = new Thread(() -> {
+            synchronized (Counter.class) {
+                System.out.println("T1 locked Counter");
+                try { Thread.sleep(100); } catch (Exception e) {}
+                synchronized (Counter2.class) {
+                    System.out.println("T1 locked Counter2");
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (Counter2.class) {
+                System.out.println("T2 locked Counter2");
+                try { Thread.sleep(100); } catch (Exception e) {}
+                synchronized (Counter.class) {
+                    System.out.println("T2 locked Counter");
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+
+class Counter {}
+class Counter2 {}
+```
+
+### What Happens?
+Possible output:
+```
+T1 locked Counter
+T2 locked Counter2
+```
+
+Then program hangs forever.
+
+Reason:
+- T1 waiting for Counter2.class
+- T2 waiting for Counter.class
+- Circular waiting → Deadlock
+
+---
+
+# 🔟 Avoiding Deadlock
+
+Always lock in SAME order.
+
+Correct pattern:
+
+```
+Counter.class → Counter2.class
+```
+
+If both threads follow same order:
+No deadlock.
+
+---
+
+# 1️⃣1️⃣ Interrupt Concept (Important)
+
+`interrupt()` does NOT stop a thread.
+
+- If thread is sleeping/waiting → `InterruptedException`
+- If running normally → interrupt flag set
+
+Check using:
+
+```java
+Thread.currentThread().isInterrupted();
+```
+
+---
+
+# 1️⃣2️⃣ join()
+
+```java
+t1.join();
+```
+
+Main thread waits until `t1` finishes.
+
+- Ensures completion
+- Does NOT fix race condition
+
+---
+
+# 🔥 Interview Key Points
+
+- Race condition happens due to non-atomic operations.
+- Synchronization ensures mutual exclusion.
+- Lock object determines synchronization, not variable.
+- Static synchronized locks class object.
+- Deadlock requires multiple locks with circular dependency.
+- Java locks are reentrant.
+- join() ensures completion, not correctness.
+- interrupt() sends signal, does not kill thread.
+
+---
+
+# 🎯 One-Line Interview Definition
+
+> Synchronization is a mechanism that controls access to shared resources in a multithreaded environment by allowing only one thread at a time to execute critical sections.
+
+---
