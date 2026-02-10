@@ -1,4 +1,4 @@
-package coding;
+package coding.OOPS.Keywords;
 
 // this refers to current object variable
 class Demo {

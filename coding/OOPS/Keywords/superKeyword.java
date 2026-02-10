@@ -1,4 +1,4 @@
-package coding;
+package coding.OOPS.Keywords;
 class Parent {
     int x = 10;
     String surname;

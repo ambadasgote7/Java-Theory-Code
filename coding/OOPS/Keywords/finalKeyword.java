@@ -1,4 +1,4 @@
-package coding;
+package coding.OOPS.Keywords;
 
 final class Sample {
     final int x = 10;
