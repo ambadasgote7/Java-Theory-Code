@@ -659,3 +659,908 @@ Main thread waits until `t1` finishes.
 > Synchronization is a mechanism that controls access to shared resources in a multithreaded environment by allowing only one thread at a time to execute critical sections.
 
 ---
+
+# Java Volatile Keyword 
+
+## 1️⃣ Problem – Visibility Issue
+
+In multithreading, each thread may use its own CPU cache.
+
+So:
+- Thread A updates a variable.
+- Thread B may still see the old value.
+- Because B reads from its cached copy.
+
+This is called **memory visibility problem**.
+
+---
+
+## 2️⃣ Example Without volatile
+
+```java
+class Shared {
+    boolean flag = true;
+}
+
+public class Test {
+    public static void main(String[] args) {
+
+        Shared s = new Shared();
+
+        Thread t1 = new Thread(() -> {
+            while (s.flag) {
+                // infinite loop possible
+            }
+            System.out.println("Stopped");
+        });
+
+        Thread t2 = new Thread(() -> {
+            try { Thread.sleep(10); } catch (Exception e) {}
+            s.flag = false;
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+Problem:
+`t1` may never stop because it may not see updated value.
+
+---
+
+## 3️⃣ Fix Using volatile
+
+```java
+class Shared {
+    volatile boolean flag = true;
+}
+```
+
+Now:
+- Write goes directly to main memory.
+- Read always comes from main memory.
+- All threads see updated value immediately.
+
+---
+
+## 4️⃣ What volatile Guarantees
+
+✔ Visibility  
+✔ Prevents instruction reordering  
+
+---
+
+## 5️⃣ What volatile Does NOT Guarantee
+
+❌ Atomicity  
+
+Example:
+
+```java
+volatile int count = 0;
+count++;   // NOT thread-safe
+```
+
+Because `count++` = Read → Add → Write (3 steps)
+
+---
+
+## 6️⃣ When To Use volatile
+
+- Status flag
+- Stop signal
+- One thread writes, others read
+
+---
+
+## 🎯 Interview Definition
+
+> Volatile ensures visibility of shared variables across threads but does not provide atomicity.
+
+---
+
+# Producer–Consumer Problem (Java Multithreading Notes)
+
+---
+
+# 1️⃣ Problem Statement
+
+Two types of threads:
+
+- **Producer** → produces data
+- **Consumer** → consumes data
+
+Both share a common resource (Buffer / Queue).
+
+Problems:
+- If buffer is **full** → producer must wait
+- If buffer is **empty** → consumer must wait
+
+This requires **inter-thread communication**.
+
+---
+
+# 2️⃣ Key Methods Used
+
+| Method | Purpose |
+|--------|----------|
+| `wait()` | Makes thread release lock and go to WAITING state |
+| `notify()` | Wakes one waiting thread |
+| `notifyAll()` | Wakes all waiting threads |
+
+Important Rules:
+- Must be called inside `synchronized` block
+- `wait()` releases the lock
+- After notification, thread must reacquire lock
+
+---
+
+# 3️⃣ Simple Blocking Queue Implementation
+
+```java
+import java.util.LinkedList;
+import java.util.Queue;
+
+class BlockingQueue {
+
+    private Queue<Integer> queue = new LinkedList<>();
+    private int capacity;
+
+    public BlockingQueue(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public void add(int item) {
+        synchronized (queue) {
+
+            while (queue.size() == capacity) {
+                try {
+                    queue.wait();   // wait if full
+                } catch (Exception e) {}
+            }
+
+            queue.add(item);
+            System.out.println("Produced: " + item);
+
+            queue.notifyAll();   // notify consumers
+        }
+    }
+
+    public int remove() {
+        synchronized (queue) {
+
+            while (queue.isEmpty()) {
+                try {
+                    queue.wait();   // wait if empty
+                } catch (Exception e) {}
+            }
+
+            int item = queue.remove();
+            System.out.println("Consumed: " + item);
+
+            queue.notifyAll();   // notify producers
+            return item;
+        }
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+
+        BlockingQueue queue = new BlockingQueue(1);
+
+        Thread producer = new Thread(() -> {
+            for (int i = 1; i <= 3; i++) {
+                queue.add(i);
+            }
+        });
+
+        Thread consumer = new Thread(() -> {
+            for (int i = 1; i <= 3; i++) {
+                queue.remove();
+            }
+        });
+
+        producer.start();
+        consumer.start();
+    }
+}
+```
+
+---
+
+# 4️⃣ Why Use `while` Instead of `if`?
+
+Because of **Spurious Wakeups**.
+
+Correct pattern:
+
+```
+while(condition) {
+    wait();
+}
+```
+
+Never use:
+
+```
+if(condition) {
+    wait();
+}
+```
+
+---
+
+# 5️⃣ Thread States Involved
+
+When producer/consumer calls `wait()`:
+
+```
+RUNNABLE → WAITING
+```
+
+After `notify()`:
+
+```
+WAITING → BLOCKED → RUNNABLE
+```
+
+---
+
+# 6️⃣ Important Concepts
+
+- `wait()` releases the lock.
+- `notify()` does NOT release the lock immediately.
+- The awakened thread must reacquire the monitor lock.
+- Always use `notifyAll()` in real-world producer-consumer cases.
+
+---
+
+# 7️⃣ Interview Key Points
+
+- Demonstrates inter-thread communication.
+- Uses intrinsic locks (monitor lock).
+- Avoid busy-waiting.
+- Always guard `wait()` with `while`.
+- Deadlock can occur if locking strategy is wrong.
+
+---
+
+# 🎯 Interview Definition
+
+> The Producer–Consumer problem is a classic multithreading problem that demonstrates inter-thread communication using wait() and notify() to coordinate access to shared resources.
+
+---
+# Java Thread States and Transitions (Interview Notes)
+
+---
+
+# 1️⃣ Thread Life Cycle in Java
+
+A thread in Java goes through the following states:
+
+- NEW  
+- RUNNABLE  
+- BLOCKED  
+- WAITING  
+- TIMED_WAITING  
+- TERMINATED  
+
+You can check thread state using:
+
+```java
+Thread.State
+```
+
+---
+
+# 2️⃣ NEW
+
+Thread is created but not started.
+
+```java
+Thread t = new Thread();
+System.out.println(t.getState());  // NEW
+```
+
+---
+
+# 3️⃣ RUNNABLE
+
+After calling:
+
+```java
+t.start();
+```
+
+Thread enters RUNNABLE state.
+
+Important:
+- RUNNABLE means ready to run.
+- Java does NOT separate READY and RUNNING.
+- Thread scheduler decides execution.
+
+---
+
+# 4️⃣ BLOCKED
+
+Thread is waiting to acquire a monitor lock.
+
+Example:
+
+```java
+synchronized(lock) {
+    // If another thread holds lock,
+    // current thread becomes BLOCKED
+}
+```
+
+State: BLOCKED
+
+---
+
+# 5️⃣ WAITING
+
+Thread waits indefinitely until another thread wakes it.
+
+Caused by:
+
+```java
+wait()
+join()
+```
+
+State: WAITING
+
+---
+
+# 6️⃣ TIMED_WAITING
+
+Thread waits for a specific amount of time.
+
+Caused by:
+
+```java
+Thread.sleep(1000)
+wait(1000)
+join(1000)
+```
+
+State: TIMED_WAITING
+
+After timeout → returns to RUNNABLE.
+
+---
+
+# 7️⃣ TERMINATED
+
+Thread has completed execution.
+
+After `run()` method finishes.
+
+A terminated thread cannot be restarted.
+
+---
+
+# 8️⃣ Example Showing State Changes
+
+```java
+public class Test {
+    public static void main(String[] args) throws Exception {
+
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {}
+        });
+
+        System.out.println(t.getState());  // NEW
+
+        t.start();
+        System.out.println(t.getState());  // RUNNABLE
+
+        Thread.sleep(100);
+        System.out.println(t.getState());  // TIMED_WAITING
+
+        t.join();
+        System.out.println(t.getState());  // TERMINATED
+    }
+}
+```
+
+---
+
+# 9️⃣ State Transition Flow
+
+```
+NEW → start() → RUNNABLE
+RUNNABLE → lock unavailable → BLOCKED
+RUNNABLE → wait() → WAITING
+RUNNABLE → sleep() → TIMED_WAITING
+RUNNABLE → run() completes → TERMINATED
+```
+
+---
+
+# 🔟 Important Differences
+
+| State | Reason |
+|--------|--------|
+| BLOCKED | Waiting for monitor lock |
+| WAITING | Waiting for notify() or join() |
+| TIMED_WAITING | Waiting for specific time |
+| RUNNABLE | Ready or running |
+
+---
+
+# 1️⃣1️⃣ Interview Key Points
+
+- Java does not have separate RUNNING state.
+- `wait()` → WAITING state.
+- `sleep()` → TIMED_WAITING state.
+- Lock contention → BLOCKED state.
+- Thread cannot restart after TERMINATED.
+
+---
+
+# 🎯 Interview Definition
+
+> A thread in Java transitions through NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, and TERMINATED states depending on its execution flow and synchronization behavior.
+
+---
+
+# Running and Yielding of a Thread (Java Notes)
+
+---
+
+# 1️⃣ RUNNABLE State
+
+In Java, there is no separate RUNNING state.
+
+When a thread is:
+
+- Ready to run
+- Or currently executing
+
+It is in:
+
+```
+RUNNABLE
+```
+
+The **Thread Scheduler** decides which thread runs.
+
+---
+
+# 2️⃣ Thread Scheduler
+
+- Part of JVM
+- Chooses which thread executes
+- Behavior is OS dependent
+- No guaranteed order
+
+---
+
+# 3️⃣ Thread.yield()
+
+`yield()` is a static method:
+
+```java
+Thread.yield();
+```
+
+It means:
+
+> "I am willing to give up CPU. Let other threads run."
+
+---
+
+# 4️⃣ Important About yield()
+
+- It does NOT guarantee context switch.
+- It is just a suggestion to scheduler.
+- Thread remains in RUNNABLE state.
+- It does NOT release locks.
+
+---
+
+# 5️⃣ Example
+
+```java
+public class Test {
+    public static void main(String[] args) {
+
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                System.out.println("Thread 1");
+                Thread.yield();
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                System.out.println("Thread 2");
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+Output is unpredictable.
+
+yield() may or may not switch execution.
+
+---
+
+# 6️⃣ yield() vs sleep()
+
+| yield() | sleep() |
+|----------|---------|
+| Suggests scheduler | Forces delay |
+| No time parameter | Requires time |
+| Does not release lock | Does not release lock |
+| May do nothing | Always pauses thread |
+
+---
+
+# 7️⃣ Interview Points
+
+- yield() is a hint, not a command.
+- Thread remains RUNNABLE.
+- No guarantee of execution order.
+- Rarely used in real applications.
+
+---
+
+# 🎯 Interview Definition
+
+> Thread.yield() is a static method that hints the scheduler to pause the current thread and allow other threads of equal priority to execute, but it provides no guarantee of context switching.
+
+---
+
+# Thread Sleep and Wake-Up (Java Notes)
+
+---
+
+# 1️⃣ Thread.sleep()
+
+`Thread.sleep()` pauses the current thread for a specified time.
+
+Syntax:
+
+```java
+Thread.sleep(milliseconds);
+```
+
+Example:
+
+```java
+public class Test {
+    public static void main(String[] args) {
+
+        Thread t = new Thread(() -> {
+            try {
+                System.out.println("Sleeping...");
+                Thread.sleep(2000);
+                System.out.println("Woke up!");
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted!");
+            }
+        });
+
+        t.start();
+    }
+}
+```
+
+---
+
+# 2️⃣ What Happens Internally?
+
+When `sleep()` is called:
+
+- Thread enters `TIMED_WAITING` state
+- Thread pauses execution
+- After time expires → returns to `RUNNABLE`
+
+---
+
+# 3️⃣ Important Points
+
+- `sleep()` is static method.
+- It affects the current thread.
+- It does NOT release any locks.
+- It throws `InterruptedException`.
+
+---
+
+# 4️⃣ Sleep vs Wait
+
+| sleep() | wait() |
+|----------|---------|
+| Belongs to Thread class | Belongs to Object class |
+| Does NOT release lock | Releases lock |
+| Used for delay | Used for inter-thread communication |
+| Goes to TIMED_WAITING | Goes to WAITING |
+
+---
+
+# 5️⃣ Can Sleep Be Interrupted?
+
+Yes.
+
+If another thread calls:
+
+```java
+thread.interrupt();
+```
+
+Then:
+
+- Sleeping thread throws `InterruptedException`.
+
+---
+
+# 6️⃣ Example of Interrupting Sleep
+
+```java
+public class Test {
+    public static void main(String[] args) {
+
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                System.out.println("Sleep interrupted!");
+            }
+        });
+
+        t.start();
+        t.interrupt();
+    }
+}
+```
+
+---
+
+# 🎯 Interview Definition
+
+> Thread.sleep() pauses the current thread for a specified time without releasing any locks and moves it to TIMED_WAITING state.
+
+---
+
+# Java Multithreading – Remaining Core Concepts (Interview Guide)
+
+---
+
+# 1️⃣ Waiting and Notifying
+
+## wait()
+
+- Belongs to Object class
+- Must be called inside synchronized block
+- Releases the lock
+- Moves thread to WAITING state
+
+## notify()
+
+- Wakes one waiting thread
+- Does NOT release lock immediately
+
+## notifyAll()
+
+- Wakes all waiting threads
+
+Example:
+
+```java
+synchronized(obj) {
+    while(condition) {
+        obj.wait();
+    }
+    obj.notifyAll();
+}
+```
+
+---
+
+# 2️⃣ Thread Timed Waiting
+
+Thread enters TIMED_WAITING when:
+
+- Thread.sleep(time)
+- wait(time)
+- join(time)
+
+After timeout:
+Thread moves back to RUNNABLE.
+
+---
+
+# 3️⃣ Interruption of a Thread
+
+## interrupt()
+
+```java
+t.interrupt();
+```
+
+- Does NOT force stop thread
+- Sets interrupt flag
+- If sleeping/waiting → throws InterruptedException
+- If running normally → flag is set
+
+Check interrupt flag:
+
+```java
+Thread.currentThread().isInterrupted();
+```
+
+---
+
+# 4️⃣ Thread Joining
+
+## join()
+
+```java
+t.join();
+```
+
+- Current thread waits until t finishes
+- Moves to WAITING state
+- Ensures completion
+- Does NOT fix race conditions
+
+Timed join:
+
+```java
+t.join(1000);
+```
+
+Moves thread to TIMED_WAITING.
+
+---
+
+# 5️⃣ Thread Priority
+
+Range: 1 – 10
+
+Constants:
+
+```java
+Thread.MIN_PRIORITY  // 1
+Thread.NORM_PRIORITY // 5
+Thread.MAX_PRIORITY  // 10
+```
+
+Set priority:
+
+```java
+t.setPriority(10);
+```
+
+Important:
+- Only a suggestion
+- Scheduler may ignore
+- OS dependent
+
+---
+
+# 6️⃣ Thread Scheduler
+
+- Part of JVM
+- Chooses which thread executes
+- No guaranteed order
+- Uses time slicing
+- Behavior depends on OS
+
+Java has no direct control over scheduler.
+
+---
+
+# 7️⃣ Deadlocks
+
+Deadlock happens when:
+
+- Two or more threads hold locks
+- Each waits for the other’s lock
+- Circular dependency
+- Program freezes
+
+Conditions for Deadlock:
+1. Mutual exclusion
+2. Hold and wait
+3. No preemption
+4. Circular wait
+
+---
+
+# 8️⃣ Creating a Deadlock (Example)
+
+```java
+public class Test {
+
+    public static void main(String[] args) {
+
+        Thread t1 = new Thread(() -> {
+            synchronized (String.class) {
+                System.out.println("T1 locked String");
+
+                try { Thread.sleep(100); } catch (Exception e) {}
+
+                synchronized (Integer.class) {
+                    System.out.println("T1 locked Integer");
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (Integer.class) {
+                System.out.println("T2 locked Integer");
+
+                try { Thread.sleep(100); } catch (Exception e) {}
+
+                synchronized (String.class) {
+                    System.out.println("T2 locked String");
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+Result:
+Program hangs due to deadlock.
+
+---
+
+# 9️⃣ Avoiding Deadlock
+
+✔ Always acquire locks in same order  
+✔ Use tryLock (ReentrantLock)  
+✔ Avoid nested locking when possible  
+
+---
+
+# 🔟 Complete Thread State Flow
+
+```
+NEW → start() → RUNNABLE
+RUNNABLE → sleep() → TIMED_WAITING
+RUNNABLE → wait() → WAITING
+RUNNABLE → waiting for lock → BLOCKED
+RUNNABLE → run() ends → TERMINATED
+```
+
+---
+
+# 🎯 Interview Rapid-Fire Summary
+
+- sleep() → TIMED_WAITING (no lock release)
+- wait() → WAITING (releases lock)
+- join() → WAITING
+- interrupt() → sets flag / throws exception
+- yield() → hint to scheduler
+- synchronized → mutual exclusion
+- volatile → visibility only
+- Deadlock → circular waiting
+
+---
+
+# Final Interview Definition
+
+> Java multithreading provides mechanisms like synchronization, volatile variables, wait/notify, thread priorities, and scheduling to manage concurrent execution while preventing race conditions and deadlocks.
+
+---
+
+
+
+
