@@ -59,6 +59,7 @@ public class BankAccount {
 - => The class which uses the properties and behaviours of the base class is referred to as the **Derived class/Child class/Sub class**.
 
 **Example :**
+1. Example for IS-A
 ```java
 class Person {
     public String name;
@@ -69,6 +70,51 @@ class Student extends Person {
     public int marks;
     public String grade;
 }
+```
+
+2. Example for HAS-A
+```java
+public class Main {
+
+    // Laptop class
+    static class Laptop {
+        String brand;
+
+        Laptop(String brand) {
+            this.brand = brand;
+        }
+
+        void showLaptop() {
+            System.out.println("Laptop brand: " + brand);
+        }
+    }
+
+    // Student class (HAS-A Laptop)
+    static class Student {
+        String name;
+        Laptop laptop;   // HAS-A relationship
+
+        Student(String name, Laptop laptop) {
+            this.name = name;
+            this.laptop = laptop;
+        }
+
+        void showDetails() {
+            System.out.println("Student name: " + name);
+            laptop.showLaptop();
+        }
+    }
+
+    // Main method
+    public static void main(String[] args) {
+
+        Laptop l1 = new Laptop("HP");
+        Student s1 = new Student("Ambadas", l1);
+
+        s1.showDetails();
+    }
+}
+
 ```
 
 ## Constructor
