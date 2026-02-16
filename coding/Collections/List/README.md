@@ -667,6 +667,757 @@ Comparable is used to define natural ordering inside a class using compareTo(), 
 
 ---
 
+# Java LinkedList – Complete Guide (Interview Preparation)
 
+---
 
+# 1️⃣ What is LinkedList?
 
+LinkedList is a doubly linked list implementation of:
+
+- List
+- Deque
+- Queue
+
+Package:
+```java
+import java.util.LinkedList;
+```
+
+Unlike ArrayList (which uses a dynamic array), LinkedList uses nodes connected through references.
+
+---
+
+# 2️⃣ Internal Structure
+
+Each node contains:
+
+```
+[ previous | data | next ]
+```
+
+Visual Representation:
+
+```
+null <- [A] <-> [B] <-> [C] -> null
+```
+
+Each element stores:
+- Data
+- Reference to next node
+- Reference to previous node
+
+This is why it is called a doubly linked list.
+
+---
+
+# 3️⃣ LinkedList vs ArrayList
+
+| Feature | ArrayList | LinkedList |
+|----------|------------|------------|
+| Internal Structure | Dynamic Array | Doubly Linked List |
+| Random Access | O(1) | O(n) |
+| Insert at Beginning | O(n) | O(1) |
+| Insert at End | O(1)* | O(1) |
+| Memory Usage | Less | More |
+| Shifting Elements | Yes | No |
+
+*ArrayList resizing may occasionally take O(n).
+
+---
+
+# 4️⃣ Time Complexity
+
+| Operation | LinkedList Complexity |
+|------------|----------------------|
+| add() | O(1) |
+| addFirst() | O(1) |
+| addLast() | O(1) |
+| removeFirst() | O(1) |
+| removeLast() | O(1) |
+| get(index) | O(n) |
+| remove(index) | O(n) |
+
+Reason:
+LinkedList must traverse nodes sequentially.
+
+---
+
+# 5️⃣ Basic Example
+
+```java
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+
+        LinkedList<String> list = new LinkedList<>();
+
+        list.add("A");
+        list.add("B");
+        list.add("C");
+
+        System.out.println(list);
+
+        list.addFirst("Start");
+        list.addLast("End");
+
+        System.out.println(list);
+    }
+}
+```
+
+Output:
+```
+[A, B, C]
+[Start, A, B, C, End]
+```
+
+---
+
+# 6️⃣ Queue Methods (Because It Implements Deque)
+
+Queue-style methods:
+
+```java
+add()
+offer()
+poll()
+peek()
+```
+
+Deque-style methods:
+
+```java
+addFirst()
+addLast()
+removeFirst()
+removeLast()
+getFirst()
+getLast()
+```
+
+---
+
+# 7️⃣ When to Use LinkedList
+
+Use LinkedList when:
+
+✔ Frequent insertions at beginning  
+✔ Frequent deletions  
+✔ Implementing Queue or Deque  
+✔ No need for random access  
+
+---
+
+# 8️⃣ When NOT to Use LinkedList
+
+Avoid LinkedList when:
+
+❌ Frequent index-based access  
+❌ Memory efficiency is important  
+❌ High-performance random reads required  
+
+Each node stores:
+- Data
+- Next reference
+- Previous reference
+
+So it consumes more memory than ArrayList.
+
+---
+
+# 9️⃣ Important Interview Questions
+
+Q: Is LinkedList faster than ArrayList?
+
+Answer:
+It depends on usage.
+
+- Frequent random access → ArrayList is faster.
+- Frequent insert/delete at beginning → LinkedList is faster.
+
+---
+
+# 🔟 Performance Example
+
+### Case 1: Inserting at index 0 repeatedly
+
+```java
+for(int i = 0; i < 100000; i++){
+    list.add(0, i);
+}
+```
+
+LinkedList → Faster  
+ArrayList → Slower (due to shifting)
+
+---
+
+### Case 2: Adding at end repeatedly
+
+```java
+for(int i = 0; i < 100000; i++){
+    list.add(i);
+}
+```
+
+ArrayList → Generally faster  
+LinkedList → Slightly slower due to node allocation
+
+---
+
+# 1️⃣1️⃣ Summary
+
+LinkedList is a doubly linked list implementation that provides fast insertions and deletions but slow random access. It is suitable for queue-like operations but not ideal for index-based access.
+
+---
+
+# Java Vector – Complete Guide (Interview Preparation)
+
+---
+
+# 1️⃣ What is Vector?
+
+Vector is a legacy dynamic array implementation introduced in Java 1.0.
+
+Package:
+```java
+import java.util.Vector;
+```
+
+It is similar to ArrayList but:
+
+- It is synchronized (thread-safe)
+- It was introduced before the Collection Framework (Java 1.2)
+- It is considered a legacy class
+
+---
+
+# 2️⃣ Internal Working
+
+Vector is backed by a dynamic array.
+
+### Default Capacity:
+```
+10
+```
+
+### Resizing Rule:
+When capacity is full → capacity doubles (100% increase)
+
+Example growth:
+```
+10 → 20 → 40 → 80 → 160
+```
+
+This differs from ArrayList (which grows by 50%).
+
+---
+
+# 3️⃣ Why Vector Is Slower
+
+All major methods are synchronized:
+
+```java
+public synchronized boolean add(E e)
+```
+
+Synchronization ensures thread safety but adds performance overhead.
+
+In single-threaded applications, Vector is slower than ArrayList.
+
+---
+
+# 4️⃣ Time Complexity
+
+Same as ArrayList (algorithm-wise):
+
+| Operation | Time Complexity |
+|------------|----------------|
+| get(index) | O(1) |
+| set(index) | O(1) |
+| add() | O(1) amortized |
+| remove(index) | O(n) |
+
+Performance difference is due to synchronization.
+
+---
+
+# 5️⃣ Basic Example
+
+```java
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+
+        Vector<String> vector = new Vector<>();
+
+        vector.add("A");
+        vector.add("B");
+        vector.add("C");
+
+        System.out.println(vector);
+
+        vector.remove("B");
+
+        System.out.println(vector);
+    }
+}
+```
+
+Output:
+```
+[A, B, C]
+[A, C]
+```
+
+---
+
+# 6️⃣ Legacy Methods in Vector
+
+Vector has older methods not commonly used today:
+
+```java
+addElement()
+removeElement()
+elementAt()
+firstElement()
+lastElement()
+```
+
+Example:
+
+```java
+vector.addElement("D");
+```
+
+Modern code prefers `add()`.
+
+---
+
+# 7️⃣ Capacity Control
+
+Vector allows capacity increment control:
+
+```java
+Vector<Integer> v = new Vector<>(initialCapacity, capacityIncrement);
+```
+
+Example:
+
+```java
+Vector<Integer> v = new Vector<>(10, 5);
+```
+
+Capacity growth:
+```
+10 → 15 → 20 → 25
+```
+
+If capacityIncrement is not specified, capacity doubles.
+
+---
+
+# 8️⃣ Vector vs ArrayList
+
+| Feature | ArrayList | Vector |
+|----------|------------|--------|
+| Thread Safe | No | Yes |
+| Synchronization | No | Yes |
+| Introduced | Java 1.2 | Java 1.0 |
+| Performance | Faster | Slower |
+| Growth Factor | 50% | 100% |
+
+---
+
+# 9️⃣ When to Use Vector
+
+Almost never in modern applications.
+
+Better Alternatives:
+
+- ArrayList → Single-threaded use
+- Collections.synchronizedList()
+- CopyOnWriteArrayList (modern thread-safe option)
+
+Vector is mostly found in legacy systems.
+
+---
+
+# 🔟 Interview Summary
+
+Vector is a synchronized dynamic array introduced in Java 1.0. It provides thread safety through method-level synchronization but is slower than ArrayList. It is considered a legacy class and is rarely used in modern Java applications.
+
+---
+
+# Java Stack – Complete Guide (Interview Preparation)
+
+---
+
+# 1️⃣ What is Stack?
+
+Stack is a legacy class in Java that follows the LIFO principle.
+
+LIFO = Last In First Out
+
+Package:
+```java
+import java.util.Stack;
+```
+
+Stack extends Vector.
+
+So internally:
+```
+Stack → Vector → List → Collection
+```
+
+---
+
+# 2️⃣ Stack Principle (LIFO)
+
+Example:
+
+Push:
+```
+Push A
+Push B
+Push C
+```
+
+Stack looks like:
+```
+Top
+ C
+ B
+ A
+```
+
+Pop removes:
+```
+C (first)
+```
+
+Last inserted element comes out first.
+
+---
+
+# 3️⃣ Basic Stack Methods
+
+| Method | Description |
+|----------|-------------|
+| push(E item) | Add element to top |
+| pop() | Remove and return top element |
+| peek() | Return top element (no removal) |
+| empty() | Check if stack is empty |
+| search(Object o) | Returns position from top |
+
+---
+
+# 4️⃣ Basic Example
+
+```java
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+
+        Stack<String> stack = new Stack<>();
+
+        stack.push("A");
+        stack.push("B");
+        stack.push("C");
+
+        System.out.println(stack);
+
+        System.out.println("Peek: " + stack.peek());
+
+        System.out.println("Pop: " + stack.pop());
+
+        System.out.println(stack);
+    }
+}
+```
+
+Output:
+```
+[A, B, C]
+Peek: C
+Pop: C
+[A, B]
+```
+
+---
+
+# 5️⃣ Important Notes
+
+- Stack is synchronized (because it extends Vector)
+- It is a legacy class
+- Not recommended for modern usage
+
+---
+
+# 6️⃣ Why Stack Is Not Recommended
+
+Because:
+
+- It is synchronized (slower)
+- It extends Vector (bad design choice)
+- Modern alternative exists
+
+---
+
+# 7️⃣ Modern Replacement for Stack
+
+Use:
+
+```java
+Deque<Integer> stack = new ArrayDeque<>();
+```
+
+Push:
+```java
+stack.push(10);
+```
+
+Pop:
+```java
+stack.pop();
+```
+
+Peek:
+```java
+stack.peek();
+```
+
+ArrayDeque is:
+- Faster
+- Not synchronized
+- Better design
+
+---
+
+# 8️⃣ Time Complexity
+
+| Operation | Time Complexity |
+|------------|----------------|
+| push() | O(1) |
+| pop() | O(1) |
+| peek() | O(1) |
+
+---
+
+# 9️⃣ Interview Questions
+
+Q: Why is Stack considered legacy?
+
+Answer:
+Stack extends Vector, making it synchronized and slower. Modern Java recommends using ArrayDeque for stack operations.
+
+Q: What principle does Stack follow?
+
+Answer:
+LIFO (Last In First Out).
+
+---
+
+# 🔟 Interview Summary
+
+Stack is a legacy class that implements a LIFO data structure. It extends Vector and is synchronized, making it slower. Modern Java recommends using ArrayDeque instead of Stack.
+
+---
+
+# Java CopyOnWriteArrayList – Complete Guide (Interview Preparation)
+
+---
+
+# 1️⃣ What is CopyOnWriteArrayList?
+
+CopyOnWriteArrayList is a thread-safe variant of ArrayList.
+
+Package:
+```java
+import java.util.concurrent.CopyOnWriteArrayList;
+```
+
+It is designed for concurrent (multi-threaded) environments.
+
+---
+
+# 2️⃣ What Does "Copy On Write" Mean?
+
+Whenever a modification happens (add, remove, set):
+
+✔ A new copy of the underlying array is created  
+✔ The modification happens on the new copy  
+✔ Old array remains unchanged  
+
+Read operations do NOT require locking.
+
+---
+
+# 3️⃣ Why Is It Useful?
+
+In multi-threaded applications:
+
+- Many threads read data
+- Few threads modify data
+
+CopyOnWriteArrayList is ideal when:
+
+✔ Reads are frequent  
+✔ Writes are rare  
+
+---
+
+# 4️⃣ Internal Working
+
+When you do:
+
+```java
+list.add("A");
+```
+
+Steps:
+1. Create new array
+2. Copy old elements
+3. Add new element
+4. Replace reference
+
+This makes write operations expensive.
+
+But read operations:
+
+```java
+list.get(0);
+```
+
+Are very fast and do not require synchronization.
+
+---
+
+# 5️⃣ Basic Example
+
+```java
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class Test {
+    public static void main(String[] args) {
+
+        CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+
+        list.add("A");
+        list.add("B");
+        list.add("C");
+
+        System.out.println(list);
+
+        list.remove("B");
+
+        System.out.println(list);
+    }
+}
+```
+
+Output:
+```
+[A, B, C]
+[A, C]
+```
+
+---
+
+# 6️⃣ Important Feature: Safe Iteration
+
+In normal ArrayList:
+
+Modifying during iteration causes:
+
+```
+ConcurrentModificationException
+```
+
+Example (ArrayList problem):
+
+```java
+for(String s : list) {
+    list.remove(s); // Exception
+}
+```
+
+But CopyOnWriteArrayList does NOT throw this exception.
+
+It iterates over a snapshot of the array.
+
+---
+
+# 7️⃣ Time Complexity
+
+| Operation | Complexity |
+|------------|------------|
+| get() | O(1) |
+| add() | O(n) |
+| remove() | O(n) |
+
+Write operations are expensive because copying happens.
+
+---
+
+# 8️⃣ When to Use CopyOnWriteArrayList
+
+Use when:
+
+✔ Multi-threaded environment  
+✔ Read operations are frequent  
+✔ Write operations are rare  
+
+Example:
+- Event listener lists
+- Configuration lists
+
+---
+
+# 9️⃣ When NOT to Use
+
+Avoid when:
+
+❌ Frequent writes  
+❌ Large data sets  
+❌ Memory-sensitive systems  
+
+Because each write creates a new array copy.
+
+---
+
+# 🔟 CopyOnWriteArrayList vs Vector
+
+| Feature | Vector | CopyOnWriteArrayList |
+|----------|--------|----------------------|
+| Thread Safe | Yes | Yes |
+| Synchronization | Method-level | Copy-on-write |
+| Read Performance | Slower | Faster |
+| Write Performance | Moderate | Expensive |
+| Iterator Safety | Fail-fast | Fail-safe |
+
+---
+
+# 1️⃣1️⃣ Fail-Fast vs Fail-Safe
+
+Fail-Fast:
+Throws ConcurrentModificationException  
+Example: ArrayList, Vector
+
+Fail-Safe:
+Works on a snapshot  
+No exception  
+Example: CopyOnWriteArrayList
+
+---
+
+# 1️⃣2️⃣ Interview Summary
+
+CopyOnWriteArrayList is a thread-safe implementation of List where modifications create a new copy of the underlying array. It is best suited for scenarios where reads are frequent and writes are rare. It provides fail-safe iteration and avoids ConcurrentModificationException.
+
+---
