@@ -2205,3 +2205,389 @@ ConcurrentHashMap is faster and unordered, while ConcurrentSkipListMap maintains
 ConcurrentSkipListMap is a thread-safe, sorted map implementation based on a skip list data structure. It provides O(log n) operations and supports concurrent access with navigation methods, making it suitable for ordered data in multi-threaded environments.
 
 ---
+
+# Java EnumMap – Complete Guide (Interview Preparation)
+
+---
+
+# 1️⃣ What is EnumMap?
+
+EnumMap is a specialized Map implementation designed specifically for **enum keys**.
+
+Package:
+```java
+import java.util.EnumMap;
+```
+
+It is highly efficient compared to HashMap when keys are enums.
+
+---
+
+# 2️⃣ Key Features
+
+✔ Keys must be enum type  
+✔ Maintains natural order of enum constants  
+✔ Faster than HashMap (array-based internally)  
+✔ Does NOT allow null keys  
+✔ Allows null values  
+✔ Not thread-safe  
+✔ Memory efficient  
+
+---
+
+# 3️⃣ Why EnumMap Exists
+
+If keys are enums, using HashMap is unnecessary overhead.
+
+EnumMap provides:
+
+✔ Better performance  
+✔ Less memory usage  
+✔ Predictable order  
+
+---
+
+# 4️⃣ Internal Working
+
+EnumMap internally uses:
+
+```
+Array
+```
+
+Since enum constants are fixed, each enum value maps to an array index.
+
+Example:
+
+```
+MONDAY → index 0
+TUESDAY → index 1
+WEDNESDAY → index 2
+```
+
+This makes operations very fast.
+
+---
+
+# 5️⃣ Time Complexity
+
+Because of array-based storage:
+
+| Operation | Complexity |
+|------------|------------|
+| put() | O(1) |
+| get() | O(1) |
+| remove() | O(1) |
+
+Usually faster than HashMap.
+
+---
+
+# 6️⃣ Basic Example
+
+```java
+import java.util.*;
+
+enum Day {
+    MONDAY, TUESDAY, WEDNESDAY
+}
+
+public class Test {
+    public static void main(String[] args) {
+
+        EnumMap<Day, String> map = new EnumMap<>(Day.class);
+
+        map.put(Day.MONDAY, "Work");
+        map.put(Day.TUESDAY, "Gym");
+        map.put(Day.WEDNESDAY, "Study");
+
+        System.out.println(map);
+    }
+}
+```
+
+Output:
+```
+{MONDAY=Work, TUESDAY=Gym, WEDNESDAY=Study}
+```
+
+Order follows enum declaration.
+
+---
+
+# 7️⃣ EnumMap vs HashMap
+
+| Feature | HashMap | EnumMap |
+|----------|----------|---------|
+| Key Type | Any Object | Only Enum |
+| Performance | Slower | Faster |
+| Memory | More | Less |
+| Order | No guarantee | Enum order |
+| Null Key | Allowed | Not allowed |
+| Null Value | Allowed | Allowed |
+
+---
+
+# 8️⃣ Null Rules
+
+EnumMap does NOT allow null keys.
+
+Example:
+
+```java
+map.put(null, "A"); // NullPointerException
+```
+
+But null values are allowed:
+
+```java
+map.put(Day.MONDAY, null);
+```
+
+---
+
+# 9️⃣ When to Use EnumMap
+
+Use when:
+
+✔ Keys are enum type  
+✔ High performance needed  
+✔ Predictable order required  
+
+Examples:
+- State machines
+- Configuration flags
+- Game states
+- Day-based schedules
+
+---
+
+# 🔟 When NOT to Use
+
+Avoid when:
+
+❌ Keys are not enums  
+❌ Need thread safety  
+
+---
+
+# 1️⃣1️⃣ Interview Questions
+
+Q: Why is EnumMap faster than HashMap?
+
+Answer:
+Because EnumMap uses an internal array instead of hashing, providing direct index access.
+
+Q: Can EnumMap have null keys?
+
+Answer:
+No, but it can have null values.
+
+---
+
+# 1️⃣2️⃣ Interview Summary
+
+EnumMap is a specialized Map implementation designed for enum keys that provides high performance and memory efficiency using an internal array structure. It maintains the natural order of enum constants and is faster than HashMap when keys are enums.
+
+---
+
+# Java ImmutableMap – Complete Guide (Interview Preparation)
+
+---
+
+# 1️⃣ What is ImmutableMap?
+
+ImmutableMap is a map whose contents **cannot be modified after creation**.
+
+Once created:
+
+✔ No addition  
+✔ No removal  
+✔ No update  
+
+It is useful for creating **read-only maps**.
+
+---
+
+# 2️⃣ How to Create ImmutableMap in Java
+
+There are two main ways:
+
+### 1️⃣ Using Map.of() (Java 9+)
+
+```java
+Map<Integer, String> map = Map.of(
+        1, "A",
+        2, "B",
+        3, "C"
+);
+```
+
+---
+
+### 2️⃣ Using Map.ofEntries() (For many elements)
+
+```java
+Map<Integer, String> map = Map.ofEntries(
+        Map.entry(1, "A"),
+        Map.entry(2, "B"),
+        Map.entry(3, "C")
+);
+```
+
+---
+
+### 3️⃣ Using Collections.unmodifiableMap()
+
+```java
+Map<Integer, String> temp = new HashMap<>();
+temp.put(1, "A");
+
+Map<Integer, String> map =
+        Collections.unmodifiableMap(temp);
+```
+
+Note:
+Underlying map can still change if original reference exists.
+
+---
+
+# 3️⃣ Key Features
+
+✔ Immutable (cannot change after creation)  
+✔ Thread-safe (no modification possible)  
+✔ Memory efficient  
+✔ Does NOT allow null keys  
+✔ Does NOT allow null values  
+✔ Faster for read operations  
+
+---
+
+# 4️⃣ Modification Attempt Example
+
+```java
+map.put(4, "D");  // UnsupportedOperationException
+```
+
+Runtime error occurs because map is immutable.
+
+---
+
+# 5️⃣ ImmutableMap vs HashMap
+
+| Feature | HashMap | ImmutableMap |
+|----------|----------|--------------|
+| Mutable | Yes | No |
+| Thread Safe | No | Yes (effectively) |
+| Null Allowed | Yes | No |
+| Performance | Normal | Faster reads |
+| Modification | Allowed | Not allowed |
+
+---
+
+# 6️⃣ Why ImmutableMap Is Useful
+
+Advantages:
+
+✔ Safe sharing between threads  
+✔ Prevent accidental modification  
+✔ Better security  
+✔ Predictable behavior  
+
+Common use cases:
+
+- Configuration data
+- Constants
+- Lookup tables
+- Cache keys
+- API responses
+
+---
+
+# 7️⃣ Internal Concept
+
+ImmutableMap stores data in fixed structure:
+
+```
+No resizing
+No rehashing
+No synchronization needed
+```
+
+This improves performance.
+
+---
+
+# 8️⃣ Important Difference
+
+### Map.of()
+
+Creates truly immutable map.
+
+### Collections.unmodifiableMap()
+
+Creates read-only view, but underlying map can still change.
+
+Example:
+
+```java
+Map<Integer, String> original = new HashMap<>();
+Map<Integer, String> view =
+        Collections.unmodifiableMap(original);
+
+original.put(1, "A"); // visible in view
+```
+
+---
+
+# 9️⃣ Null Rules
+
+Immutable maps do NOT allow null.
+
+Example:
+
+```java
+Map.of(1, null); // NullPointerException
+```
+
+---
+
+# 🔟 When to Use ImmutableMap
+
+Use when:
+
+✔ Data should never change  
+✔ Thread-safe read-only data needed  
+✔ Configuration constants  
+
+---
+
+# 1️⃣1️⃣ When NOT to Use
+
+Avoid when:
+
+❌ Data needs modification  
+❌ Dynamic updates required  
+
+---
+
+# 1️⃣2️⃣ Interview Questions
+
+Q: What is ImmutableMap?
+
+Answer:
+An ImmutableMap is a map whose contents cannot be modified after creation, providing thread safety and predictable behavior.
+
+Q: Difference between Map.of() and Collections.unmodifiableMap()?
+
+Answer:
+Map.of() creates a truly immutable map, while Collections.unmodifiableMap() creates a read-only view of a mutable map.
+
+---
+
+# 1️⃣3️⃣ Interview Summary
+
+ImmutableMap is a read-only map that cannot be modified after creation. It is commonly created using Map.of() or Map.ofEntries() in Java 9+ and is useful for thread-safe constant data and configuration.
+
+---
+
