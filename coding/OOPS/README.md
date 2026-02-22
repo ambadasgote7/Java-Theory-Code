@@ -308,6 +308,14 @@ double-double parameter
 float-float parameter
 
 ```
+# IMP points
+1. Compiler will bind the method call based of the reference type not on the object type.
+2. Compiler will try to find the eaxct match if not found then it does the auto type promotion.
+       - char --> char, int, long, float, double
+3. In parent child relation always child will get the priority.
+4. In case of child child relation themn it throws the ambigus method call error.
+5. It is good to use the var-agrs in case of same type but different parameter count.
+---
 ## Var-args in java
 - This mechanism is available in java from JDK1.5V
 - In case of var-args all the arugments should be of same datatype
